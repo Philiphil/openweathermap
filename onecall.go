@@ -14,6 +14,7 @@
 package openweathermap
 
 import (
+	"errors"
 	"encoding/json"
 	"fmt"
 	"strings"
@@ -161,7 +162,11 @@ func NewOneCall(unit, lang, key string, excludes []string, options ...Option) (*
 // OneCallByCoordinates will provide the onecall weather with the
 // provided location coordinates.
 func (w *OneCallData) OneCallByCoordinates(location *Coordinates) error {
-	response, err := w.client.Get(fmt.Sprintf(fmt.Sprintf(onecallURL, "appid=%s&lat=%f&lon=%f&units=%s&lang=%s&exclude=%s"), w.Key, location.Latitude, location.Longitude, w.Unit, w.Lang, w.Excludes))
+	url := fmt.Sprintf(fmt.Sprintf(onecallURL, "appid=%s&lat=%f&lon=%f&units=%s&lang=%s&exclude=%s"), w.Key, location.Latitude, location.Longitude, w.Unit, w.Lang, w.Excludes)
+	response, err := w.client.Get(url)
+	if response.StatusCode == 401{
+		return errors.New("unauthorized")
+	}
 	if err != nil {
 		return err
 	}
