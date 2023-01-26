@@ -167,6 +167,9 @@ func (w *OneCallData) OneCallByCoordinates(location *Coordinates) error {
 	if response.StatusCode == 401{
 		return errors.New("unauthorized")
 	}
+	if response.StatusCode == 429{
+		return errors.New("Your account is temporary blocked due to exceeding of requests limitation of your subscription type. Please choose the proper subscription https://openweathermap.org/price")
+	}
 	if err != nil {
 		return err
 	}
